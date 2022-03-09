@@ -5,8 +5,8 @@ from firehose.constants import DEFAULT_MESSAGE, DEFAULT_PATH
 from firehose.types import MessageType
 
 
-class ClientTestCase(TestCase):
-    def test_init_default_values(self) -> None:
+class TestClientConstructor(TestCase):
+    def test_default_values(self) -> None:
         client = Client(
             hostname="foobar",
             port=80,
@@ -17,7 +17,7 @@ class ClientTestCase(TestCase):
         assert client.path == DEFAULT_PATH
         assert client.message_data == DEFAULT_MESSAGE
 
-    def test_init_provided_values(self) -> None:
+    def test_provided_values(self) -> None:
         provided_path = "/some/path"
         provided_message = "an arbitrary message"
 
