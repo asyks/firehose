@@ -3,12 +3,12 @@ from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
-from firehose.client import Client
-from firehose.types import MessageType, Response
+from spigot.client import Client
+from spigot.types import MessageType, Response
 
 
 @pytest.mark.asyncio
-@patch("firehose.client.Client.send_message", return_type=AsyncMock)
+@patch("spigot.client.Client.send_message", return_type=AsyncMock)
 class TestClientRunConcurrently:
     async def test_run_concurrently_single_message(
         self, mock_client_send_message: AsyncMock
@@ -40,9 +40,9 @@ class TestClientRunConcurrently:
 
 
 @pytest.mark.asyncio
-@patch("firehose.connection.Connection.close", return_type=AsyncMock)
-@patch("firehose.connection.Connection.open", return_type=AsyncMock)
-@patch("firehose.connection.Connection.send", return_type=AsyncMock)
+@patch("spigot.connection.Connection.close", return_type=AsyncMock)
+@patch("spigot.connection.Connection.open", return_type=AsyncMock)
+@patch("spigot.connection.Connection.send", return_type=AsyncMock)
 class TestClientSendMessage:
     async def test_send_message(
         self,

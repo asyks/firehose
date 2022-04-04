@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from firehose.client import Client
-from firehose.constants import DEFAULT_MESSAGE, DEFAULT_PATH
-from firehose.types import MessageType
+from spigot.client import Client
+from spigot.constants import DEFAULT_MESSAGE, DEFAULT_PATH
+from spigot.types import MessageType
 
 
 class TestClientConstructor(TestCase):

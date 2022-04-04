@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from firehose.constants import DEFAULT_HTTP_VERSION
-from firehose.message import HttpMessage
+from spigot.constants import DEFAULT_HTTP_VERSION
+from spigot.message import HttpMessage
 
 
 class HttpMessageTestCase(TestCase):

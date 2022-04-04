@@ -3,11 +3,11 @@ from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
-from firehose.connection import Connection
+from spigot.connection import Connection
 
 
 @pytest.mark.asyncio
-@patch("firehose.connection.open_connection", return_type=AsyncMock)
+@patch("spigot.connection.open_connection", return_type=AsyncMock)
 class TestConnectionOpen:
     async def test_calls_asyncio_open_connection(
         self, mock_asyncio_open_connection: AsyncMock
