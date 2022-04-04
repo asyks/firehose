@@ -1,5 +1,5 @@
 from io import StringIO
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
@@ -8,10 +8,10 @@ from firehose.types import MessageType, Response
 
 
 @pytest.mark.asyncio
-@pytest.mark.usefixtures("mock_client_send_message")
+@patch("firehose.client.Client.send_message", return_type=AsyncMock)
 class TestClientRunConcurrently:
     async def test_run_concurrently_single_message(
-        self, mock_client_send_message: pytest.fixture
+        self, mock_client_send_message: AsyncMock
     ) -> None:
         client = Client(
             hostname="foobar",
@@ -25,7 +25,7 @@ class TestClientRunConcurrently:
         assert mock_client_send_message.call_count == 1
 
     async def test_run_concurrently_multi_message(
-        self, mock_client_send_message: pytest.fixture
+        self, mock_client_send_message: AsyncMock
     ) -> None:
         client = Client(
             hostname="foobar",
@@ -40,15 +40,15 @@ class TestClientRunConcurrently:
 
 
 @pytest.mark.asyncio
-@pytest.mark.usefixtures(
-    "mock_connection_close", "mock_connection_open", "mock_connection_send"
-)
+@patch("firehose.connection.Connection.close", return_type=AsyncMock)
+@patch("firehose.connection.Connection.open", return_type=AsyncMock)
+@patch("firehose.connection.Connection.send", return_type=AsyncMock)
 class TestClientSendMessage:
     async def test_send_message(
         self,
-        mock_connection_close: pytest.fixture,
-        mock_connection_open: pytest.fixture,
-        mock_connection_send: pytest.fixture,
+        mock_connection_send: AsyncMock,
+        mock_connection_open: AsyncMock,
+        mock_connection_close: AsyncMock,
     ) -> None:
         TEST_MESSAGE = "test message"
         client = Client(
