@@ -30,12 +30,14 @@ class Connection:
     async def send(self, message: str | bytes) -> Response:
         self.write(message)
 
-        response = Response(data=StringIO())
+        response = Response(data=StringIO(''))
         while True:
             line = await self.reader.readline()
             if not line:
                 break
 
             response.data.write(line.decode(self.encoding))
+
+        response.data.seek(0)
 
         return response
