@@ -29,12 +29,12 @@ class TestConnectionSend:
     async def test_sends_str_data_and_collects_response(
         self, mock_asyncio_open_connection: AsyncMock,
     ) -> None:
-        response_data = 'some arbirary response data'
+        response_data = b'some arbirary response data'
         mock_stream_reader = AsyncMock(
             spec=StreamReader,
             readline=AsyncMock(
                 side_effect=[
-                    response_data.encode(DEFAULT_ENCODING), ''
+                    response_data, ''
                 ]
             )
         )
@@ -46,6 +46,6 @@ class TestConnectionSend:
 
         await connection.open()
 
-        response = await connection.send('some arbitrary request data')
+        response = await connection.send(b'some arbitrary request data')
 
-        assert response.data.read() == response_data
+        assert response.content_bytes == response_data

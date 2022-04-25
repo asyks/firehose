@@ -1,10 +1,10 @@
-from io import StringIO
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
 from spigot.client import Client
-from spigot.types import MessageType, Response
+from spigot.types import MessageType
+from spigot.response import Response
 
 
 @pytest.mark.asyncio
@@ -58,12 +58,13 @@ class TestClientSendMessage:
             number_of_messages=5,
         )
         mock_connection_send.return_value = Mock(
-            spec=Response, data=StringIO(TEST_MESSAGE)
+            spec=Response, content_str=TEST_MESSAGE
         )
 
         response = await client.send_message(sequence_num=1)
+        print(response.content_str)
 
-        assert response.data.readline() == TEST_MESSAGE
+        assert response.content_str == TEST_MESSAGE
         assert mock_connection_open.await_count == 1
         assert mock_connection_send.await_count == 1
         assert mock_connection_close.call_count == 1

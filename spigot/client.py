@@ -3,10 +3,11 @@ from __future__ import annotations
 from asyncio import gather
 
 from .connection import Connection
-from .constants import DEFAULT_MESSAGE, DEFAULT_PATH
+from .constants import DEFAULT_ENCODING, DEFAULT_MESSAGE, DEFAULT_PATH
 from .exceptions import ClientInitError
 from .message import HttpMessage
-from .types import MessageType, Response
+from .response import Response
+from .types import MessageType, to_bytes
 
 
 class Client:
@@ -45,7 +46,9 @@ class Client:
         connection = Connection(self.hostname, self.port)
         await connection.open()
         print(f"Sending message {sequence_num}: {self.message}")
-        response = await connection.send(str(self.message))
+        response = await connection.send(
+            str(self.message).encode(DEFAULT_ENCODING)
+        )
         print(f"Recieved response {sequence_num}, closing connection")
         connection.close()
 

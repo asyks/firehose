@@ -10,11 +10,6 @@ class MessageType(Enum):
     RAW = "raw"
 
 
-@dataclass
-class Response:
-    data: StringIO
-
-
 def to_bytes(data: str | bytes, encoding: str) -> bytes:
     data_bytes: bytes
     if type(data) == str:
