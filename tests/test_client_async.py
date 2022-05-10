@@ -1,3 +1,4 @@
+from asyncio import StreamReader, StreamWriter
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
@@ -65,3 +66,31 @@ class TestClientSendMessage:
         assert mock_connection_open.await_count == 1
         assert mock_connection_send.await_count == 1
         assert mock_connection_close.call_count == 1
+
+    @patch("spigot.connection.open_connection", return_type=AsyncMock)
+    async def test_collects_response_data(
+        self,
+        mock_asyncio_open_connection: AsyncMock,
+    ) -> None:
+        response_data = b'some arbirary response data'
+        mock_stream_reader = AsyncMock(
+            spec=StreamReader,
+            readline=AsyncMock(
+                side_effect=[
+                    response_data, ''
+                ]
+            )
+        )
+        mock_asyncio_open_connection.return_value = (
+            mock_stream_reader, Mock(spec=StreamWriter)
+        )
+
+        client = Client(
+            hostname="foobar",
+            port=80,
+            message_type=MessageType.HTTP,
+            number_of_messages=5,
+        )
+        response = await client.send_message(sequence_num=1)
+
+        assert response.content_bytes == response_data
