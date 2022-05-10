@@ -19,7 +19,6 @@ class TestClientRunConcurrently:
             message_type=MessageType.HTTP,
             number_of_messages=1,
         )
-
         await client.run_concurrently()
 
         assert mock_client_send_message.call_count == 1
@@ -33,36 +32,34 @@ class TestClientRunConcurrently:
             message_type=MessageType.HTTP,
             number_of_messages=5,
         )
-
         await client.run_concurrently()
 
         assert mock_client_send_message.call_count == 5
 
 
 @pytest.mark.asyncio
-@patch("spigot.connection.Connection.close", return_type=AsyncMock)
-@patch("spigot.connection.Connection.open", return_type=AsyncMock)
-@patch("spigot.connection.Connection.send", return_type=AsyncMock)
 class TestClientSendMessage:
-    async def test_send_message(
+    @patch("spigot.connection.Connection.close", return_type=AsyncMock)
+    @patch("spigot.connection.Connection.open", return_type=AsyncMock)
+    @patch("spigot.connection.Connection.send", return_type=AsyncMock)
+    async def test_calls_internal_connection_interface(
         self,
         mock_connection_send: AsyncMock,
         mock_connection_open: AsyncMock,
         mock_connection_close: AsyncMock,
     ) -> None:
         TEST_MESSAGE = "test message"
+        mock_connection_send.return_value = Mock(
+            spec=Response, content_str=TEST_MESSAGE
+        )
+
         client = Client(
             hostname="foobar",
             port=80,
             message_type=MessageType.HTTP,
             number_of_messages=5,
         )
-        mock_connection_send.return_value = Mock(
-            spec=Response, content_str=TEST_MESSAGE
-        )
-
         response = await client.send_message(sequence_num=1)
-        print(response.content_str)
 
         assert response.content_str == TEST_MESSAGE
         assert mock_connection_open.await_count == 1

@@ -4,7 +4,6 @@ from unittest.mock import AsyncMock, Mock, patch
 import pytest
 
 from spigot.connection import Connection
-from spigot.constants import DEFAULT_ENCODING
 
 
 @pytest.mark.asyncio
