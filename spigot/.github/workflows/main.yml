@@ -1,11 +1,5 @@
 name: main
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    paths:
-      - *
+on: [push]
 jobs:
   python-tests:
     runs-on: ubuntu-latest
