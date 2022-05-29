@@ -1,4 +1,7 @@
-mypy==0.910
-flake8==3.9.2
+# Install lint dependencies
+-r requirements-lint.txt
+# Install test dependencies
+-r requirements-test.txt
+
 black==22.3.0
 pydocstyle==6.1.1
