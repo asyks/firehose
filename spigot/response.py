@@ -8,7 +8,7 @@ from .constants import DEFAULT_ENCODING
 class Response:
     def __init__(self, encoding: str = DEFAULT_ENCODING) -> None:
         super().__init__()
-        self.stream = BytesIO(b'')
+        self.stream = BytesIO(b"")
         self.encoding = encoding
 
     @property

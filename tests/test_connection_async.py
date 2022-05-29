@@ -13,7 +13,8 @@ class TestConnectionOpen:
         self, mock_asyncio_open_connection: AsyncMock
     ) -> None:
         mock_asyncio_open_connection.return_value = (
-            Mock(spec=StreamReader), Mock(spec=StreamWriter)
+            Mock(spec=StreamReader),
+            Mock(spec=StreamWriter),
         )
         connection = Connection(hostname="foobar", port=80)
 
@@ -26,25 +27,22 @@ class TestConnectionOpen:
 @patch("spigot.connection.open_connection", return_type=AsyncMock)
 class TestConnectionSend:
     async def test_sends_str_data_and_collects_response(
-        self, mock_asyncio_open_connection: AsyncMock,
+        self,
+        mock_asyncio_open_connection: AsyncMock,
     ) -> None:
-        response_data = b'some arbirary response data'
+        response_data = b"some arbirary response data"
         mock_stream_reader = AsyncMock(
-            spec=StreamReader,
-            readline=AsyncMock(
-                side_effect=[
-                    response_data, ''
-                ]
-            )
+            spec=StreamReader, readline=AsyncMock(side_effect=[response_data, ""])
         )
 
         mock_asyncio_open_connection.return_value = (
-            mock_stream_reader, Mock(spec=StreamWriter)
+            mock_stream_reader,
+            Mock(spec=StreamWriter),
         )
         connection = Connection(hostname="foobar", port=80)
 
         await connection.open()
 
-        response = await connection.send(b'some arbitrary request data')
+        response = await connection.send(b"some arbitrary request data")
 
         assert response.content_bytes == response_data

@@ -72,17 +72,13 @@ class TestClientSendMessage:
         self,
         mock_asyncio_open_connection: AsyncMock,
     ) -> None:
-        response_data = b'some arbirary response data'
+        response_data = b"some arbirary response data"
         mock_stream_reader = AsyncMock(
-            spec=StreamReader,
-            readline=AsyncMock(
-                side_effect=[
-                    response_data, ''
-                ]
-            )
+            spec=StreamReader, readline=AsyncMock(side_effect=[response_data, ""])
         )
         mock_asyncio_open_connection.return_value = (
-            mock_stream_reader, Mock(spec=StreamWriter)
+            mock_stream_reader,
+            Mock(spec=StreamWriter),
         )
 
         client = Client(
