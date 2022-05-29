@@ -7,9 +7,7 @@ from .response import Response
 
 
 class Connection:
-    def __init__(
-        self, hostname: str, port: int
-    ) -> None:
+    def __init__(self, hostname: str, port: int) -> None:
         super().__init__()
         self.hostname = hostname
         self.port = port
@@ -17,9 +15,7 @@ class Connection:
         self.writer: StreamWriter
 
     async def open(self) -> None:
-        self.reader, self.writer = await open_connection(
-            self.hostname, self.port
-        )
+        self.reader, self.writer = await open_connection(self.hostname, self.port)
 
     def close(self) -> None:
         self.writer.close()
@@ -27,9 +23,7 @@ class Connection:
     def write(self, data: bytes) -> None:
         self.writer.write(data)
 
-    async def send(
-        self, message: bytes, encoding: str = DEFAULT_ENCODING
-    ) -> Response:
+    async def send(self, message: bytes, encoding: str = DEFAULT_ENCODING) -> Response:
         self.write(message)
 
         response = Response(encoding)

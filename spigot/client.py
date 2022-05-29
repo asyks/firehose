@@ -46,9 +46,7 @@ class Client:
         connection = Connection(self.hostname, self.port)
         await connection.open()
         print(f"Sending message {sequence_num}: {self.message}")
-        response = await connection.send(
-            str(self.message).encode(DEFAULT_ENCODING)
-        )
+        response = await connection.send(str(self.message).encode(DEFAULT_ENCODING))
         print(f"Recieved response {sequence_num}, closing connection")
         connection.close()
 
