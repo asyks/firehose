@@ -7,7 +7,7 @@ from .constants import DEFAULT_ENCODING, DEFAULT_MESSAGE, DEFAULT_PATH
 from .exceptions import ClientInitError
 from .message import HttpMessage
 from .response import Response
-from .types import MessageType, to_bytes
+from .types import MessageType
 
 
 class Client:
