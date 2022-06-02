@@ -2,6 +2,8 @@ import asyncio
 import argparse
 from urllib.parse import urlparse
 
+from spigot.constants import DEFAULT_ENCODING, DEFAULT_PATH
+
 from .client import Client
 from .types import MessageType
 
@@ -35,6 +37,22 @@ def get_default_port(scheme: str) -> int:
     return 443 if scheme == "https" else 80
 
 
+async def run_concurrently(
+    client: Client,
+    path: str,
+    message_type: MessageType,
+    message_data: str,
+    encoding: str,
+    count: int,
+) -> None:
+    async def send_sequenced_message(sequence_num: int) -> None:
+        print(f"Sending message {sequence_num}: {message_data}")
+        await client.send_message(path, message_type, message_data, encoding)
+        print(f"Recieved response {sequence_num}, closing connection")
+
+    await asyncio.gather(*(send_sequenced_message(n + 1) for n in range(count)))
+
+
 def cmd() -> None:
     args = parser.parse_args()
 
@@ -43,20 +61,21 @@ def cmd() -> None:
         url = urlparse(args.url, scheme=DEFAULT_SCHEME)
         hostname = url.hostname or ""
         port = int(url.port) if url.port else get_default_port(url.scheme)
-        path = url.path
+        path = url.path or DEFAULT_PATH
 
     if args.type == MessageType.RAW.value:
         message_type = MessageType.RAW
         hostname, port_str = args.url.split(":")
         port = int(port_str) if port_str else get_default_port("")
-        path = ""
+        path = DEFAULT_PATH
 
-    client = Client(
-        hostname=hostname,
-        port=port,
-        path=path,
-        message_type=message_type,
-        number_of_messages=args.reqs or DEFAULT_REQS,
-        message_data=args.msg or DEFAULT_MSG,
+    client = Client(hostname=hostname, port=port)
+
+    message_type = args.type
+    message_data = args.msg or DEFAULT_MSG
+    count = args.reqs or DEFAULT_REQS
+    encoding = DEFAULT_ENCODING
+
+    asyncio.run(
+        run_concurrently(client, path, message_type, message_data, encoding, count)
     )
-    asyncio.run(client.run_concurrently())
