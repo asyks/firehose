@@ -4,9 +4,8 @@ from unittest.mock import AsyncMock, Mock, patch
 import pytest
 
 from spigot.client import Client
-from spigot.constants import DEFAULT_ENCODING
-from spigot.types import MessageType
 from spigot.response import Response
+from spigot.message import HttpMessage, RawMessage
 
 
 @pytest.mark.asyncio
@@ -29,12 +28,7 @@ class TestClientSendMessage:
             port=80,
         )
 
-        response = await client.send_message(
-            path="",
-            message_type=MessageType.RAW,
-            message_data="",
-            encoding=DEFAULT_ENCODING,
-        )
+        response = await client.send_message(RawMessage(data=""))
 
         assert response.content_str == TEST_MESSAGE
         assert mock_connection_open.await_count == 1
@@ -61,10 +55,7 @@ class TestClientSendMessage:
         )
 
         response = await client.send_message(
-            path="/some/path",
-            message_type=MessageType.HTTP,
-            message_data="",
-            encoding=DEFAULT_ENCODING,
+            HttpMessage(hostname="foobar", path="/some/path")
         )
 
         assert response.content_str == TEST_MESSAGE
@@ -92,10 +83,7 @@ class TestClientSendMessage:
         )
 
         response = await client.send_message(
-            path="/some/path",
-            message_type=MessageType.HTTP,
-            message_data="",
-            encoding=DEFAULT_ENCODING,
+            HttpMessage(hostname="foobar", path="/some/path")
         )
 
         assert response.content_bytes == response_data

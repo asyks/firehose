@@ -2,7 +2,8 @@ import asyncio
 import argparse
 from urllib.parse import urlparse
 
-from spigot.constants import DEFAULT_ENCODING, DEFAULT_PATH
+from spigot.constants import DEFAULT_PATH
+from spigot.message import Message, HttpMessage, RawMessage
 
 from .client import Client
 from .types import MessageType
@@ -39,15 +40,12 @@ def get_default_port(scheme: str) -> int:
 
 async def run_concurrently(
     client: Client,
-    path: str,
-    message_type: MessageType,
-    message_data: str,
-    encoding: str,
+    message: Message,
     count: int,
 ) -> None:
     async def send_sequenced_message(sequence_num: int) -> None:
-        print(f"Sending message {sequence_num}: {message_data}")
-        await client.send_message(path, message_type, message_data, encoding)
+        print(f"Sending message {sequence_num}: {str(message)}")
+        await client.send_message(message)
         print(f"Recieved response {sequence_num}, closing connection")
 
     await asyncio.gather(*(send_sequenced_message(n + 1) for n in range(count)))
@@ -56,22 +54,20 @@ async def run_concurrently(
 def cmd() -> None:
     args = parser.parse_args()
 
+    message_data = args.msg or DEFAULT_MSG
+    count = args.reqs or DEFAULT_REQS
     url = urlparse(args.url, scheme=DEFAULT_SCHEME)
+
     hostname = url.hostname or ""
     port = int(url.port) if url.port else get_default_port(url.scheme)
     path = url.path or DEFAULT_PATH
+
+    message: Message
     if args.type == MessageType.HTTP.value:
-        message_type = MessageType.HTTP
-    elif args.type == MessageType.RAW.value:
-        message_type = MessageType.RAW
+        message = HttpMessage(hostname=hostname, path=path)
+    else:
+        message = RawMessage(data=message_data)
 
     client = Client(hostname=hostname, port=port)
 
-    message_type = args.type
-    message_data = args.msg or DEFAULT_MSG
-    count = args.reqs or DEFAULT_REQS
-    encoding = DEFAULT_ENCODING
-
-    asyncio.run(
-        run_concurrently(client, path, message_type, message_data, encoding, count)
-    )
+    asyncio.run(run_concurrently(client, message, count))
