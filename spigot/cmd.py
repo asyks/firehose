@@ -56,18 +56,14 @@ async def run_concurrently(
 def cmd() -> None:
     args = parser.parse_args()
 
+    url = urlparse(args.url, scheme=DEFAULT_SCHEME)
+    hostname = url.hostname or ""
+    port = int(url.port) if url.port else get_default_port(url.scheme)
+    path = url.path or DEFAULT_PATH
     if args.type == MessageType.HTTP.value:
         message_type = MessageType.HTTP
-        url = urlparse(args.url, scheme=DEFAULT_SCHEME)
-        hostname = url.hostname or ""
-        port = int(url.port) if url.port else get_default_port(url.scheme)
-        path = url.path or DEFAULT_PATH
-
-    if args.type == MessageType.RAW.value:
+    elif args.type == MessageType.RAW.value:
         message_type = MessageType.RAW
-        hostname, port_str = args.url.split(":")
-        port = int(port_str) if port_str else get_default_port("")
-        path = DEFAULT_PATH
 
     client = Client(hostname=hostname, port=port)
 

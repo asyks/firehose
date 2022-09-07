@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from asyncio import StreamReader, StreamWriter, open_connection
+from asyncio import StreamReader, StreamWriter, TimeoutError, open_connection, wait_for
 
 from .constants import DEFAULT_ENCODING
 from .response import Response
@@ -28,7 +28,11 @@ class Connection:
 
         response = Response(encoding)
         while True:
-            line = await self.reader.readline()
+            try:
+                line = await wait_for(self.reader.readline(), timeout=3.0)
+            except TimeoutError:
+                break
+
             if not line:
                 break
 
