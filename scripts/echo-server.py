@@ -1,3 +1,15 @@
+"""
+Echo server which returns message bytes to the client, useful for manual testing.
+
+This module can be run as a script from cmdline, e.g.
+```
+python scripts/echo-server.py --type http --port 8080
+```
+For more info on the command and its options:
+```
+python scripts/echo-server.py --help
+```
+"""
 import argparse
 import asyncio
 from asyncio import StreamReader, StreamWriter
