@@ -10,6 +10,10 @@ requires-python = ">=3.6"
 [project.urls]
 respository = "https://github.com/asyks/spigot"
 
+[project.scripts]
+echo-server = "scripts.echo_server:cmd"
+spigot = "spigot.cmd:cmd"
+
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
